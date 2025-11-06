@@ -4,45 +4,63 @@
 // Affiche tous les visiteurs avec leur historique de visites
 // Permet l'export en PDF
 
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import type { Visitor, Visit } from "@/lib/types"
-import { getAllVisitors, getAllVisits, deleteVisitor } from "@/lib/db"
-import { Download, Trash2, History, ChevronDown, ChevronUp, Users } from "lucide-react"
-import jsPDF from "jspdf"
-import autoTable from "jspdf-autotable"
+import { useEffect, useState } from "react";
+import type { Visitor, Visit } from "@/lib/types";
+import { getAllVisitors, getAllVisits, deleteVisitor } from "@/lib/db";
+import {
+  Download,
+  Trash2,
+  History,
+  ChevronDown,
+  ChevronUp,
+  Users,
+} from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Camera } from "lucide-react";
 
 export default function VisitorList() {
   // États
-  const [visitors, setVisitors] = useState<Visitor[]>([])
-  const [visits, setVisits] = useState<Visit[]>([])
-  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set())
-  const [loading, setLoading] = useState(true)
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [loading, setLoading] = useState(true);
 
   /**
    * Charge les visiteurs et visites au montage du composant
    */
   const loadData = async () => {
     try {
-      console.log("[v0] Chargement des données...")
-      const [visitorsData, visitsData] = await Promise.all([getAllVisitors(), getAllVisits()])
+      console.log("[v0] Chargement des données...");
+      const [visitorsData, visitsData] = await Promise.all([
+        getAllVisitors(),
+        getAllVisits(),
+      ]);
 
-      console.log("[v0] Visiteurs chargés:", visitorsData.length)
-      console.log("[v0] Visites chargées:", visitsData.length)
+      console.log("[v0] Visiteurs chargés:", visitorsData.length);
+      console.log("[v0] Visites chargées:", visitsData.length);
 
-      setVisitors(visitorsData)
-      setVisits(visitsData)
+      setVisitors(visitorsData);
+      setVisits(visitsData);
     } catch (error) {
-      console.error("[v0] Erreur chargement:", error)
+      console.error("[v0] Erreur chargement:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   /**
    * Récupère les visites d'un visiteur spécifique
@@ -51,24 +69,24 @@ export default function VisitorList() {
     return visits
       .filter((v) => v.numeroCNI === numeroCNI)
       .sort((a, b) => {
-        const dateA = new Date(`${a.dateVisite} ${a.heureEntree}`)
-        const dateB = new Date(`${b.dateVisite} ${b.heureEntree}`)
-        return dateB.getTime() - dateA.getTime()
-      })
-  }
+        const dateA = new Date(`${a.dateVisite} ${a.heureEntree}`);
+        const dateB = new Date(`${b.dateVisite} ${b.heureEntree}`);
+        return dateB.getTime() - dateA.getTime();
+      });
+  };
 
   /**
    * Toggle l'affichage de l'historique d'un visiteur
    */
   const toggleHistory = (visitorId: number) => {
-    const newExpanded = new Set(expandedRows)
+    const newExpanded = new Set(expandedRows);
     if (newExpanded.has(visitorId)) {
-      newExpanded.delete(visitorId)
+      newExpanded.delete(visitorId);
     } else {
-      newExpanded.add(visitorId)
+      newExpanded.add(visitorId);
     }
-    setExpandedRows(newExpanded)
-  }
+    setExpandedRows(newExpanded);
+  };
 
   /**
    * Supprime un visiteur et toutes ses visites
@@ -76,45 +94,59 @@ export default function VisitorList() {
   const handleDelete = async (id: number, nom: string, prenoms: string) => {
     if (confirm(`Supprimer ${nom} ${prenoms} et tout son historique ?`)) {
       try {
-        console.log("[v0] Suppression visiteur ID:", id)
-        await deleteVisitor(id)
-        await loadData()
-        alert("Visiteur supprimé avec succès")
+        console.log("[v0] Suppression visiteur ID:", id);
+        await deleteVisitor(id);
+        await loadData();
+        alert("Visiteur supprimé avec succès");
       } catch (error) {
-        console.error("[v0] Erreur suppression:", error)
-        alert("Erreur lors de la suppression")
+        console.error("[v0] Erreur suppression:", error);
+        alert("Erreur lors de la suppression");
       }
     }
-  }
+  };
 
   /**
    * Génère et télécharge le PDF avec tous les visiteurs et leur historique
    */
   const exportToPDF = () => {
-    console.log("[v0] Génération du PDF...")
+    console.log("[v0] Génération du PDF...");
 
     // Crée un nouveau document PDF (format A4, orientation paysage)
-    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4",
+    });
 
     // En-tête du document
-    doc.setFontSize(20)
-    doc.setFont("helvetica", "bold")
-    doc.text("GUERITE AI - Registre des Visiteurs", 14, 15)
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("GUERITE AI - Registre des Visiteurs", 14, 15);
 
     // Date de génération
-    doc.setFontSize(10)
-    doc.setFont("helvetica", "normal")
-    const now = new Date()
-    doc.text(`Généré le ${now.toLocaleDateString("fr-FR")} à ${now.toLocaleTimeString("fr-FR")}`, 14, 22)
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const now = new Date();
+    doc.text(
+      `Généré le ${now.toLocaleDateString("fr-FR")} à ${now.toLocaleTimeString(
+        "fr-FR"
+      )}`,
+      14,
+      22
+    );
 
     // Statistiques
-    doc.text(`Total visiteurs: ${visitors.length} | Total visites: ${visits.length}`, 14, 28)
+    doc.text(
+      `Total visiteurs: ${visitors.length} | Total visites: ${visits.length}`,
+      14,
+      28
+    );
 
     // Prépare les données pour le tableau
-    const tableData: any[] = []
+    const tableData: any[] = [];
 
     visitors.forEach((visitor) => {
-      const visitorVisits = getVisitorVisits(visitor.numeroCNI)
+      const visitorVisits = getVisitorVisits(visitor.numeroCNI);
 
       // Ligne principale du visiteur
       tableData.push([
@@ -126,7 +158,7 @@ export default function VisitorList() {
         visitor.profession,
         visitorVisits.length.toString(),
         visitorVisits[0]?.dateVisite || "-",
-      ])
+      ]);
 
       // Ajoute les visites en sous-lignes
       visitorVisits.forEach((visit, index) => {
@@ -139,9 +171,9 @@ export default function VisitorList() {
           "",
           "",
           "",
-        ])
-      })
-    })
+        ]);
+      });
+    });
 
     // Génère le tableau avec autoTable
     autoTable(doc, {
@@ -181,13 +213,13 @@ export default function VisitorList() {
         6: { cellWidth: 20 },
         7: { cellWidth: 25 },
       },
-    })
+    });
 
     // Télécharge le PDF
-    const filename = `guerite_ai_${now.toISOString().split("T")[0]}.pdf`
-    doc.save(filename)
-    console.log("[v0] PDF généré:", filename)
-  }
+    const filename = `guerite_ai_${now.toISOString().split("T")[0]}.pdf`;
+    doc.save(filename);
+    console.log("[v0] PDF généré:", filename);
+  };
 
   if (loading) {
     return (
@@ -197,7 +229,7 @@ export default function VisitorList() {
           <p className="text-gray-600">Chargement des données...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -225,36 +257,69 @@ export default function VisitorList() {
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 text-lg">Aucun visiteur enregistré</p>
-          <p className="text-gray-400 text-sm mt-2">Utilisez le scanner ou le formulaire pour ajouter des visiteurs</p>
+          <p className="text-gray-400 text-sm mt-2">
+            Utilisez le scanner ou le formulaire pour ajouter des visiteurs
+          </p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-100 border-b-2 border-gray-300">
-                <th className="border px-4 py-3 text-left font-semibold text-gray-700">Nom</th>
-                <th className="border px-4 py-3 text-left font-semibold text-gray-700">Prénom(s)</th>
-                <th className="border px-4 py-3 text-left font-semibold text-gray-700">Date naissance</th>
-                <th className="border px-4 py-3 text-left font-semibold text-gray-700">N° CNI</th>
-                <th className="border px-4 py-3 text-left font-semibold text-gray-700">Profession</th>
-                <th className="border px-4 py-3 text-center font-semibold text-gray-700">Visites</th>
-                <th className="border px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
+                <th className="border px-4 py-3 text-left font-semibold text-gray-700">
+                  Nom
+                </th>
+                <th className="border px-4 py-3 text-left font-semibold text-gray-700">
+                  Prénom(s)
+                </th>
+                <th className="border px-4 py-3 text-left font-semibold text-gray-700">
+                  Date naissance
+                </th>
+                <th className="border px-4 py-3 text-left font-semibold text-gray-700">
+                  N° CNI
+                </th>
+                <th className="border px-4 py-3 text-left font-semibold text-gray-700">
+                  Profession
+                </th>
+                <th className="border px-4 py-3 text-center font-semibold text-gray-700">
+                  Visites
+                </th>
+                {/* <th className="border px-4 py-3 text-center font-semibold text-gray-700">
+                  Actions
+                </th> */}
+                <th className="border px-4 py-3 text-center font-semibold text-gray-700">
+                  recto CNI
+                </th>
+                <th className="border px-4 py-3 text-center font-semibold text-gray-700">
+                  verso CNI
+                </th>
               </tr>
             </thead>
             <tbody>
               {visitors.map((visitor) => {
-                const visitorVisits = getVisitorVisits(visitor.numeroCNI)
-                const isExpanded = expandedRows.has(visitor.id!)
+                const visitorVisits = getVisitorVisits(visitor.numeroCNI);
+                const isExpanded = expandedRows.has(visitor.id!);
 
                 return (
                   <>
                     {/* Ligne principale du visiteur */}
-                    <tr key={visitor.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="border px-4 py-3 font-medium">{visitor.nom}</td>
+                    <tr
+                      key={visitor.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="border px-4 py-3 font-medium">
+                        {visitor.nom}
+                      </td>
                       <td className="border px-4 py-3">{visitor.prenoms}</td>
-                      <td className="border px-4 py-3 text-sm">{visitor.dateNaissance}</td>
-                      <td className="border px-4 py-3 text-sm font-mono">{visitor.numeroCNI}</td>
-                      <td className="border px-4 py-3 text-sm">{visitor.profession}</td>
+                      <td className="border px-4 py-3 text-sm">
+                        {visitor.dateNaissance}
+                      </td>
+                      <td className="border px-4 py-3 text-sm font-mono">
+                        {visitor.numeroCNI}
+                      </td>
+                      <td className="border px-4 py-3 text-sm">
+                        {visitor.profession}
+                      </td>
                       <td className="border px-4 py-3 text-center">
                         <button
                           onClick={() => toggleHistory(visitor.id!)}
@@ -262,17 +327,87 @@ export default function VisitorList() {
                         >
                           <History className="w-4 h-4" />
                           {visitorVisits.length}
-                          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          {isExpanded ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
                         </button>
                       </td>
-                      <td className="border px-4 py-3 text-center">
+                      {/* <td className="border px-4 py-3 text-center">
                         <button
-                          onClick={() => handleDelete(visitor.id!, visitor.nom, visitor.prenoms)}
+                          onClick={() =>
+                            handleDelete(
+                              visitor.id!,
+                              visitor.nom,
+                              visitor.prenoms
+                            )
+                          }
                           className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors text-sm font-medium inline-flex items-center gap-1"
                         >
                           <Trash2 className="w-4 h-4" />
                           Supprimer
                         </button>
+                      </td> */}
+                      {/* RECTO */}
+                      <td className="border px-4 py-3 text-center">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <button className="text-blue-600 hover:text-blue-800 underline text-sm">
+                              {visitor.photo_recto ? "Voir recto" : "—"}
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="text-lg font-bold flex items-center gap-2">
+                                CNI Recto
+                              </DialogTitle>
+                            </DialogHeader>
+                            {visitor.photo_recto ? (
+                              <div className="mt-4">
+                                <img
+                                  src={visitor.photo_recto}
+                                  alt="CNI Recto"
+                                  className="w-full h-auto rounded-lg shadow-lg"
+                                />
+                              </div>
+                            ) : (
+                              <p className="text-gray-500 text-center py-8">
+                                Aucune photo
+                              </p>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+                      </td>
+                      {/* verso */}
+                      <td className="border px-4 py-3 text-center">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <button className="text-blue-600 hover:text-blue-800 underline text-sm">
+                              {visitor.photo_verso ? "Voir recto" : "—"}
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="text-lg font-bold flex items-center gap-2">
+                                CNI verso
+                              </DialogTitle>
+                            </DialogHeader>
+                            {visitor.photo_verso ? (
+                              <div className="mt-4">
+                                <img
+                                  src={visitor.photo_verso}
+                                  alt="CNI Recto"
+                                  className="w-full h-auto rounded-lg shadow-lg"
+                                />
+                              </div>
+                            ) : (
+                              <p className="text-gray-500 text-center py-8">
+                                Aucune photo
+                              </p>
+                            )}
+                          </DialogContent>
+                        </Dialog>
                       </td>
                     </tr>
 
@@ -302,14 +437,21 @@ export default function VisitorList() {
                                   </div>
                                   <div className="text-sm space-y-1 text-gray-700">
                                     <p>
-                                      <span className="font-medium">Date:</span> {visit.dateVisite}
+                                      <span className="font-medium">Date:</span>{" "}
+                                      {visit.dateVisite}
                                     </p>
                                     <p>
-                                      <span className="font-medium">Entrée:</span> {visit.heureEntree}
+                                      <span className="font-medium">
+                                        Entrée:
+                                      </span>{" "}
+                                      {visit.heureEntree}
                                     </p>
                                     {visit.heureSortie && (
                                       <p>
-                                        <span className="font-medium">Sortie:</span> {visit.heureSortie}
+                                        <span className="font-medium">
+                                          Sortie:
+                                        </span>{" "}
+                                        {visit.heureSortie}
                                       </p>
                                     )}
                                   </div>
@@ -321,12 +463,12 @@ export default function VisitorList() {
                       </tr>
                     )}
                   </>
-                )
+                );
               })}
             </tbody>
           </table>
         </div>
       )}
     </div>
-  )
+  );
 }

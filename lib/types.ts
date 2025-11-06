@@ -6,17 +6,18 @@
  * Interface représentant un visiteur dans le système
  * Chaque visiteur a un ID unique et un historique de visites
  */
+// Dans lib/types.ts
 export interface Visitor {
-  id?: number // ID auto-généré par IndexedDB
-  nom: string // Nom de famille
-  prenoms: string // Prénom(s)
-  dateNaissance: string // Format: YYYY-MM-DD
-  lieuNaissance: string // Ville/Pays de naissance
-  numeroCNI: string // Numéro unique de la CNI (clé de détection des doublons)
-  profession: string // Métier du visiteur
-  photoUrl?: string // Photo capturée (optionnel)
+  id?: number
+  nom: string
+  prenoms: string
+  dateNaissance: string
+  lieuNaissance: string
+  numeroCNI: string
+  profession: string
+  photo_recto?: string | null  // ← UNIFORME
+  photo_verso?: string | null  // ← UNIFORME
 }
-
 /**
  * Interface représentant une visite individuelle
  * Permet de tracker l'historique des passages
