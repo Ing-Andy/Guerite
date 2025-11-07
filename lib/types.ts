@@ -15,9 +15,10 @@ export interface Visitor {
   lieuNaissance: string
   numeroCNI: string
   profession: string
-  photo_recto?: string | null  // ← UNIFORME
-  photo_verso?: string | null  // ← UNIFORME
+  photo_recto?: string | null
+  photo_verso?: string | null
 }
+
 /**
  * Interface représentant une visite individuelle
  * Permet de tracker l'historique des passages
