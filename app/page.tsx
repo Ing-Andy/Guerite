@@ -1,10 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import CameraScanner from "@/components/camera-scanner"
 import VisitorForm from "@/components/visitor-form"
 import VisitorList from "@/components/visitor-list"
-import { Shield, Camera, FileText, List } from "lucide-react"
+import { Shield, List } from "lucide-react"
 
 export default function GueriteAI() {
   const [scannedData, setScannedData] = useState({})
@@ -49,39 +48,8 @@ export default function GueriteAI() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-            <div className="border-b border-gray-200 bg-gray-50">
-              <div className="flex">
-                <button
-                  onClick={() => setActiveMode("scanner")}
-                  className={`flex-1 px-6 py-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
-                    activeMode === "scanner"
-                      ? "bg-white text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                  }`}
-                >
-                  <Camera className="w-5 h-5" />
-                  Option 1: Scan automatique CNI
-                </button>
-                <button
-                  onClick={() => setActiveMode("form")}
-                  className={`flex-1 px-6 py-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
-                    activeMode === "form"
-                      ? "bg-white text-blue-600 border-b-2 border-blue-600"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                  }`}
-                >
-                  <FileText className="w-5 h-5" />
-                  Option 2: Saisie manuelle
-                </button>
-              </div>
-            </div>
-
             <div className="p-6">
-              {activeMode === "scanner" ? (
-                <CameraScanner onDataExtracted={handleDataExtracted} />
-              ) : (
                 <VisitorForm initialData={scannedData} onVisitorAdded={handleVisitorAdded} />
-              )}
             </div>
           </div>
 
