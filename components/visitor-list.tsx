@@ -94,46 +94,60 @@ export default function VisitorList() {
   // };
 
   const downloadExcel = () => {
-    // 🔹 Étape 1 : récupérer les anciennes données (s’il y en a)
-    const oldData = JSON.parse(localStorage.getItem("excelData") || "[]");
+    try {
+      // 🔹 1. Récupérer l'ancien cache
+      const oldData = JSON.parse(localStorage.getItem("excelData") || "[]");
 
-    // 🔹 Étape 2 : créer les nouvelles données
-    const newData = visitors.map((v) => ({
-      ID: v.id,
-      Nom: v.nom,
-      Prenoms: v.prenoms,
-      Date_Naissance: v.dateNaissance,
-      Lieux_Naissance: v.lieuNaissance,
-      Téléphone: v.phone,
-      Numero_CNI: v.numeroCNI,
-      Profession: v.profession,
-    }));
+      // 🔹 2. Préparer les nouvelles données
+      const newData = visitors.map((v) => ({
+        ID: v.id || "",
+        Nom: v.nom || "",
+        Prenoms: v.prenoms || "",
+        Date_Naissance: v.dateNaissance || "",
+        Lieux_Naissance: v.lieuNaissance || "",
+        Téléphone: v.phone || "",
+        Numero_CNI: v.numeroCNI || "",
+        Profession: v.profession || "",
+      }));
 
-    // 🔹 Étape 3 : fusionner les anciennes et les nouvelles (en évitant les doublons par ID)
-    const combined = [...oldData];
-    newData.forEach((visitor) => {
-      if (!combined.some((v) => v.ID === visitor.ID)) {
-        combined.push(visitor);
+      // 🔹 3. Fusionner avec les anciennes sans doublon
+      const combined = [...oldData];
+      newData.forEach((visitor) => {
+        if (!combined.some((v) => v.ID === visitor.ID)) {
+          combined.push(visitor);
+        }
+      });
+
+      // 🔹 4. Sauvegarder la fusion
+      localStorage.setItem("excelData", JSON.stringify(combined));
+
+      // 🔹 5. Créer la feuille Excel
+      const worksheet = XLSX.utils.json_to_sheet(combined);
+
+      if (!worksheet || Object.keys(worksheet).length === 0) {
+        alert("❌ Aucune donnée valide trouvée pour l’export Excel !");
+        return;
       }
-    });
 
-    // 🔹 Étape 4 : sauvegarder la fusion dans le localStorage
-    localStorage.setItem("excelData", JSON.stringify(combined));
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Visiteurs");
 
-    // 🔹 Étape 5 : générer le fichier Excel avec les données combinées
-    const worksheet = XLSX.utils.json_to_sheet(combined);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Visiteurs");
+      // 🔹 6. Générer le blob Excel
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+      });
 
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-    const blob = new Blob([excelBuffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-    });
-
-    saveAs(blob, "visitors.xlsx");
+      // 🔹 7. Nom de fichier dynamique
+      const date = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+      saveAs(blob, `visitors_${date}.xlsx`);
+    } catch (error) {
+      console.error("Erreur génération Excel:", error);
+      alert("Une erreur est survenue lors de la génération du fichier Excel.");
+    }
   };
 
   const loadData = async () => {
@@ -241,7 +255,9 @@ export default function VisitorList() {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="md:hidden"><Button>options</Button></DropdownMenuTrigger>
+          <DropdownMenuTrigger className="md:hidden">
+            <Button>options</Button>
+          </DropdownMenuTrigger>
           <DropdownMenuContent className="flex gap-2 flex-col">
             <button
               onClick={() => {
