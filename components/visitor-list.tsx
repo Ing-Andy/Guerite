@@ -9,8 +9,18 @@ import { useEffect, useState } from "react";
 import type { Visitor, Visit } from "@/lib/types";
 import { getAllVisitors, getAllVisits, deleteVisitor } from "@/lib/db";
 import { Trash2, History, ChevronDown, ChevronUp, Users } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, } from "./ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export default function VisitorList() {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
@@ -83,13 +93,16 @@ export default function VisitorList() {
   //   saveAs(blob, "visitors.xlsx");
   // };
 
+  // 📊 Télécharger en Excel — version corrigée et optimisée
   const downloadExcel = () => {
     try {
-      // 🔹 1. Récupérer l'ancien cache
-      const oldData = JSON.parse(localStorage.getItem("excelData") || "[]");
+      if (!visitors || visitors.length === 0) {
+        alert("❌ Aucun visiteur à exporter !");
+        return;
+      }
 
-      // 🔹 2. Préparer les nouvelles données
-      const newData = visitors.map((v) => ({
+      // 🔹 1. Préparer les données
+      const worksheetData = visitors.map((v) => ({
         ID: v.id || "",
         Nom: v.nom || "",
         Prenoms: v.prenoms || "",
@@ -100,42 +113,48 @@ export default function VisitorList() {
         Profession: v.profession || "",
       }));
 
-      // 🔹 3. Fusionner avec les anciennes sans doublon
-      const combined = [...oldData];
-      newData.forEach((visitor) => {
-        if (!combined.some((v) => v.ID === visitor.ID)) {
-          combined.push(visitor);
-        }
-      });
+      // 🔹 2. Nettoyer les lignes vides éventuelles
+      const cleanedData = worksheetData.filter(
+        (v) => v && Object.keys(v).length > 0
+      );
 
-      // 🔹 4. Sauvegarder la fusion
-      localStorage.setItem("excelData", JSON.stringify(combined));
-
-      // 🔹 5. Créer la feuille Excel
-      const worksheet = XLSX.utils.json_to_sheet(combined);
-
-      if (!worksheet || Object.keys(worksheet).length === 0) {
+      if (cleanedData.length === 0) {
         alert("❌ Aucune donnée valide trouvée pour l’export Excel !");
         return;
       }
 
+      // 🔹 3. Créer la feuille Excel
+      const worksheet = XLSX.utils.json_to_sheet(cleanedData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Visiteurs");
 
-      // 🔹 6. Générer le blob Excel
+      // 🔹 4. Générer le fichier Excel
       const excelBuffer = XLSX.write(workbook, {
         bookType: "xlsx",
         type: "array",
       });
+
       const blob = new Blob([excelBuffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
       });
 
-      // 🔹 7. Nom de fichier dynamique
-      const date = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
-      saveAs(blob, `visitors_${date}.xlsx`);
+      // 🔹 5. Nom de fichier dynamique avec date/heure
+      const date = new Date();
+      const formattedDate = date
+        .toISOString()
+        .slice(0, 19)
+        .replace(/[:T]/g, "-");
+      const fileName = `visitors_${formattedDate}.xlsx`;
+
+      // 🔹 6. Télécharger le fichier
+      saveAs(blob, fileName);
+
+      console.log(`✅ Export Excel réussi : ${fileName}`);
     } catch (error) {
-      console.error("Erreur génération Excel:", error);
+      console.error(
+        "❌ Erreur lors de la génération du fichier Excel :",
+        error
+      );
       alert("Une erreur est survenue lors de la génération du fichier Excel.");
     }
   };
@@ -223,7 +242,7 @@ export default function VisitorList() {
           <button
             onClick={() => {
               localStorage.removeItem("excelData");
-              alert("Historique des téléchargements Excel réinitialisé ✅");
+              // alert("Historique des téléchargements Excel réinitialisé ✅");
             }}
             className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
           >
