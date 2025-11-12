@@ -93,69 +93,52 @@ export default function VisitorList() {
   //   saveAs(blob, "visitors.xlsx");
   // };
 
-  // 📊 Télécharger en Excel — version corrigée et optimisée
-  const downloadExcel = () => {
+  // 🧾 Télécharger en TXT
+  const downloadTXT = () => {
     try {
       if (!visitors || visitors.length === 0) {
         alert("❌ Aucun visiteur à exporter !");
         return;
       }
 
-      // 🔹 1. Préparer les données
-      const worksheetData = visitors.map((v) => ({
-        ID: v.id || "",
-        Nom: v.nom || "",
-        Prenoms: v.prenoms || "",
-        Date_Naissance: v.dateNaissance || "",
-        Lieux_Naissance: v.lieuNaissance || "",
-        Téléphone: v.phone || "",
-        Numero_CNI: v.numeroCNI || "",
-        Profession: v.profession || "",
-      }));
+      // 🔹 1. En-tête du fichier
+      const header =
+        "ID\tNom\tPrenoms\tDate_Naissance\tLieux_Naissance\tTéléphone\tNumero_CNI\tProfession\n";
 
-      // 🔹 2. Nettoyer les lignes vides éventuelles
-      const cleanedData = worksheetData.filter(
-        (v) => v && Object.keys(v).length > 0
-      );
+      // 🔹 2. Contenu des visiteurs
+      const rows = visitors
+        .map(
+          (v) =>
+            `${v.id || ""}\t${v.nom || ""}\t${v.prenoms || ""}\t${
+              v.dateNaissance || ""
+            }\t${v.lieuNaissance || ""}\t${v.phone || ""}\t${
+              v.numeroCNI || ""
+            }\t${v.profession || ""}`
+        )
+        .join("\n");
 
-      if (cleanedData.length === 0) {
-        alert("❌ Aucune donnée valide trouvée pour l’export Excel !");
-        return;
-      }
+      const txtContent = header + rows;
 
-      // 🔹 3. Créer la feuille Excel
-      const worksheet = XLSX.utils.json_to_sheet(cleanedData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Visiteurs");
-
-      // 🔹 4. Générer le fichier Excel
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: "xlsx",
-        type: "array",
+      // 🔹 3. Créer un blob texte
+      const blob = new Blob([txtContent], {
+        type: "text/plain;charset=utf-8",
       });
 
-      const blob = new Blob([excelBuffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-      });
-
-      // 🔹 5. Nom de fichier dynamique avec date/heure
+      // 🔹 4. Nom dynamique du fichier
       const date = new Date();
       const formattedDate = date
         .toISOString()
         .slice(0, 19)
         .replace(/[:T]/g, "-");
-      const fileName = `visitors_${formattedDate}.xlsx`;
+      const fileName = `visitors_${formattedDate}.txt`;
 
-      // 🔹 6. Télécharger le fichier
+      // 🔹 5. Télécharger
       saveAs(blob, fileName);
 
-      console.log(`✅ Export Excel réussi : ${fileName}`);
+      console.log(`✅ Export TXT réussi : ${fileName}`);
     } catch (error) {
-      console.error(
-        "❌ Erreur lors de la génération du fichier Excel :",
-        error
-      );
-      alert("Une erreur est survenue lors de la génération du fichier Excel.");
+      console.error("❌ Erreur lors de la génération du fichier TXT :", error);
+      alert("Une erreur est survenue lors de la génération du fichier TXT.");
     }
   };
 
@@ -256,7 +239,7 @@ export default function VisitorList() {
             Télécharger PDF
           </button>
           <button
-            onClick={downloadExcel}
+            onClick={downloadTXT}
             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
           >
             Télécharger Excel
@@ -286,7 +269,7 @@ export default function VisitorList() {
             </button>
 
             <button
-              onClick={downloadExcel}
+              onClick={downloadTXT}
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
             >
               Télécharger Excel
