@@ -15,6 +15,12 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 
 export default function VisitorList() {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
@@ -209,7 +215,7 @@ export default function VisitorList() {
           Liste des visiteurs ({visitors.length})
         </h2>
 
-        <div className="flex gap-3 mb-4">
+        <div className="md:flex gap-3 mb-4 hidden">
           <button
             onClick={() => {
               localStorage.removeItem("excelData");
@@ -233,6 +239,35 @@ export default function VisitorList() {
             Télécharger Excel
           </button>
         </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger className="md:hidden"><Button>options</Button></DropdownMenuTrigger>
+          <DropdownMenuContent className="flex gap-2 flex-col">
+            <button
+              onClick={() => {
+                localStorage.removeItem("excelData");
+                alert("Historique des téléchargements Excel réinitialisé ✅");
+              }}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+            >
+              Réinitialiser Excel
+            </button>
+
+            <button
+              onClick={downloadPDF}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            >
+              Télécharger PDF
+            </button>
+
+            <button
+              onClick={downloadExcel}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+            >
+              Télécharger Excel
+            </button>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {visitors.length === 0 ? (
