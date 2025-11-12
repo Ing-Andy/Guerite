@@ -18,6 +18,7 @@ export default function VisitorForm({ onVisitorAdded, initialData }: Props) {
     dateNaissance: "",
     lieuNaissance: "",
     numeroCNI: "",
+    phone: "",
     profession: "",
     photo_recto: "",
     photo_verso: "",
@@ -201,6 +202,7 @@ export default function VisitorForm({ onVisitorAdded, initialData }: Props) {
           dateNaissance: "",
           lieuNaissance: "",
           numeroCNI: "",
+          phone: "",
           profession: "",
           photo_recto: "",
           photo_verso: "",
@@ -346,6 +348,19 @@ export default function VisitorForm({ onVisitorAdded, initialData }: Props) {
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Ex: 123456789"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Numero de telephone *</label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Métier"
                 />
               </div>
 

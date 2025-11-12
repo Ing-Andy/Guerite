@@ -13,6 +13,7 @@ export interface Visitor {
   prenoms: string
   dateNaissance: string
   lieuNaissance: string
+  phone: string
   numeroCNI: string
   profession: string
   photo_recto?: string | null
