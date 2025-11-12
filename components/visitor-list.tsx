@@ -272,7 +272,7 @@ export default function VisitorList() {
               onClick={downloadTXT}
               className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
             >
-              Télécharger Excel
+              Télécharger TXT
             </button>
           </DropdownMenuContent>
         </DropdownMenu>
