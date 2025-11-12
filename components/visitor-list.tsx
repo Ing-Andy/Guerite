@@ -1,26 +1,16 @@
 "use client";
 
+import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import { Button } from "./ui/button";
+import autoTable from "jspdf-autotable";
 import { useEffect, useState } from "react";
 import type { Visitor, Visit } from "@/lib/types";
 import { getAllVisitors, getAllVisits, deleteVisitor } from "@/lib/db";
 import { Trash2, History, ChevronDown, ChevronUp, Users } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, } from "./ui/dropdown-menu";
 
 export default function VisitorList() {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
