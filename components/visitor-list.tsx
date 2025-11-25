@@ -93,93 +93,92 @@ export default function VisitorList() {
   //   saveAs(blob, "visitors.xlsx");
   // };
 
-// 🧾 Télécharger en TXT (propre et sans accents)
-const downloadTXT = () => {
-  try {
-    if (!visitors || visitors.length === 0) {
-      alert("❌ Aucun visiteur à exporter !");
-      return;
+  // 🧾 Télécharger en TXT (propre et sans accents)
+  const downloadTXT = () => {
+    try {
+      if (!visitors || visitors.length === 0) {
+        alert("❌ Aucun visiteur à exporter !");
+        return;
+      }
+
+      // 🔹 1. Fonction utilitaire pour enlever les accents et caractères spéciaux
+      const removeAccents = (str: string) =>
+        str
+          ? str
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "") // accents
+              .replace(/[^\x20-\x7E]/g, "") // caractères non ASCII
+              .trim()
+          : "";
+
+      // 🔹 2. Préparer les données
+      const headers = [
+        "ID",
+        "Nom",
+        "Prenoms",
+        "Date_Naissance",
+        "Lieux_Naissance",
+        "Telephone",
+        "Numero_CNI",
+        "Profession",
+      ];
+
+      // 🔹 3. Convertir les visiteurs en tableau sans accents
+      const data = visitors.map((v) => [
+        removeAccents(String(v.id || "")),
+        removeAccents(v.nom || ""),
+        removeAccents(v.prenoms || ""),
+        removeAccents(v.dateNaissance || ""),
+        removeAccents(v.lieuNaissance || ""),
+        removeAccents(v.phone || ""),
+        removeAccents(v.numeroCNI || ""),
+        removeAccents(v.profession || ""),
+      ]);
+
+      // 🔹 4. Calculer les largeurs max par colonne pour un alignement parfait
+      const columnWidths = headers.map((_, i) =>
+        Math.max(
+          headers[i].length,
+          ...data.map((row) => (row[i] ? row[i].length : 0))
+        )
+      );
+
+      // 🔹 5. Fonction pour formater une ligne
+      const formatRow = (row: string[]) =>
+        row
+          .map((cell, i) => cell.padEnd(columnWidths[i] + 2, " ")) // espacement
+          .join("");
+
+      // 🔹 6. Construire le contenu final
+      const separator =
+        "-".repeat(columnWidths.reduce((a, b) => a + b + 2, 0)) + "\n";
+      const txtContent =
+        formatRow(headers) +
+        "\n" +
+        separator +
+        data.map((row) => formatRow(row)).join("\n");
+
+      // 🔹 7. Créer le fichier texte
+      const blob = new Blob([txtContent], {
+        type: "text/plain;charset=utf-8",
+      });
+
+      // 🔹 8. Nom dynamique du fichier
+      const date = new Date();
+      const formattedDate = date
+        .toISOString()
+        .slice(0, 19)
+        .replace(/[:T]/g, "-");
+      const fileName = `visitors_${formattedDate}.txt`;
+
+      // 🔹 9. Télécharger
+      saveAs(blob, fileName);
+      console.log(`✅ Export TXT structuré réussi : ${fileName}`);
+    } catch (error) {
+      console.error("❌ Erreur génération TXT :", error);
+      alert("Erreur lors de la génération du fichier TXT.");
     }
-
-    // 🔹 1. Fonction utilitaire pour enlever les accents et caractères spéciaux
-    const removeAccents = (str: string) =>
-      str
-        ? str
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // accents
-            .replace(/[^\x20-\x7E]/g, "") // caractères non ASCII
-            .trim()
-        : "";
-
-    // 🔹 2. Préparer les données
-    const headers = [
-      "ID",
-      "Nom",
-      "Prenoms",
-      "Date_Naissance",
-      "Lieux_Naissance",
-      "Telephone",
-      "Numero_CNI",
-      "Profession",
-    ];
-
-    // 🔹 3. Convertir les visiteurs en tableau sans accents
-    const data = visitors.map((v) => [
-      removeAccents(String(v.id || "")),
-      removeAccents(v.nom || ""),
-      removeAccents(v.prenoms || ""),
-      removeAccents(v.dateNaissance || ""),
-      removeAccents(v.lieuNaissance || ""),
-      removeAccents(v.phone || ""),
-      removeAccents(v.numeroCNI || ""),
-      removeAccents(v.profession || ""),
-    ]);
-
-    // 🔹 4. Calculer les largeurs max par colonne pour un alignement parfait
-    const columnWidths = headers.map((_, i) =>
-      Math.max(
-        headers[i].length,
-        ...data.map((row) => (row[i] ? row[i].length : 0))
-      )
-    );
-
-    // 🔹 5. Fonction pour formater une ligne
-    const formatRow = (row: string[]) =>
-      row
-        .map((cell, i) => cell.padEnd(columnWidths[i] + 2, " ")) // espacement
-        .join("");
-
-    // 🔹 6. Construire le contenu final
-    const separator =
-      "-".repeat(columnWidths.reduce((a, b) => a + b + 2, 0)) + "\n";
-    const txtContent =
-      formatRow(headers) +
-      "\n" +
-      separator +
-      data.map((row) => formatRow(row)).join("\n");
-
-    // 🔹 7. Créer le fichier texte
-    const blob = new Blob([txtContent], {
-      type: "text/plain;charset=utf-8",
-    });
-
-    // 🔹 8. Nom dynamique du fichier
-    const date = new Date();
-    const formattedDate = date
-      .toISOString()
-      .slice(0, 19)
-      .replace(/[:T]/g, "-");
-    const fileName = `visitors_${formattedDate}.txt`;
-
-    // 🔹 9. Télécharger
-    saveAs(blob, fileName);
-    console.log(`✅ Export TXT structuré réussi : ${fileName}`);
-  } catch (error) {
-    console.error("❌ Erreur génération TXT :", error);
-    alert("Erreur lors de la génération du fichier TXT.");
-  }
-};
-
+  };
 
   const loadData = async () => {
     try {
