@@ -75,6 +75,7 @@ export default function GueriteAI() {
         <h1 className="first-letter:text-4xl text-2xl font-bold">
           Guerite <span className="uppercase text-4xl">Ai</span>
         </h1>
+        
         <div className=" bg-white shadow-md py-10 px-10 rounded-2xl border-2 border-gray-50">
           <p className="text-center mb-4 font-semibold lg:mx-40">
             {forConnect === false
