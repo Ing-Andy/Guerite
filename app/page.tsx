@@ -5,9 +5,11 @@ import VisitorForm from "@/components/visitor-form";
 import VisitorList from "@/components/visitor-list";
 import { Shield, List } from "lucide-react";
 // import { loginUser } from "@/fir";
-import {  createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth } from "../lib/firebase";
-
 
 interface form {
   name?: string;
@@ -21,8 +23,12 @@ export default function GueriteAI() {
   const [activeMode, setActiveMode] = useState<"scanner" | "form">("scanner");
   const [connected, setConnected] = useState<boolean>(false);
   const [forConnect, setForConnect] = useState<boolean>(false);
-  const [formData, setFormData] = useState<form>({ name: "", email: "", password: "" });
-  
+  const [formData, setFormData] = useState<form>({
+    name: "",
+    email: "",
+    password: "",
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -35,7 +41,7 @@ export default function GueriteAI() {
     setScannedData(data);
     setActiveMode("form");
   };
-  
+
   const handleVisitorAdded = () => {
     console.log("[v0] Visiteur ajouté, rechargement de la liste");
     setRefreshKey((k) => k + 1);
@@ -47,7 +53,11 @@ export default function GueriteAI() {
 
     if (forConnect === false) {
       try {
-        const res = await createUserWithEmailAndPassword(auth,formData.email, formData.password);
+        const res = await createUserWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
         console.log("Created:", res.user);
         if (res.user) {
           setConnected(true);
@@ -55,10 +65,13 @@ export default function GueriteAI() {
       } catch (error) {
         console.error("Error creating user:", error);
       }
-    }
-    else {
+    } else {
       try {
-        const res = await signInWithEmailAndPassword(auth,formData.email, formData.password);
+        const res = await signInWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
         console.log("Logged:", res.user);
         if (res.user) {
           setConnected(true);
@@ -71,17 +84,18 @@ export default function GueriteAI() {
 
   if (connected === false) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center gap-4 bg-gradient-to-L from-gray-200 via-white  to-gray-200">
-        <h1 className="first-letter:text-4xl text-2xl font-bold">
+      // bg-[url('/login.png')] bg-no-repeat bg-cover bg-[0]
+      <div className="h-screen flex flex-col items-center justify-center 
+       gap-4 bg-gradient-to-L from-gray-200 via-white  to-gray-200">
+        <h1 className="first-letter:text-4xl text-2xl font-bold ">
           Guerite <span className="uppercase text-4xl">Ai</span>
         </h1>
-        
+
         <div className=" bg-white shadow-md py-10 px-10 rounded-2xl border-2 border-gray-50">
           <p className="text-center mb-4 font-semibold lg:mx-40">
             {forConnect === false
               ? "Enregistrer vous a fin de sauvegarder vos visiteurs"
-              : "connecter vous pour reprendre"
-            }
+              : "connecter vous pour reprendre"}
           </p>
           <form className="" onSubmit={handleSubmit}>
             {forConnect === false && (
@@ -95,7 +109,7 @@ export default function GueriteAI() {
                   onChange={handleChange}
                   className="h-12 rounded-md pl-2 my-2 shadow-sm border-2"
                   placeholder="enter your name"
-                  />
+                />
               </div>
             )}
             <div className=" flex flex-col">
@@ -108,7 +122,7 @@ export default function GueriteAI() {
                 id="email"
                 className="h-12 rounded-md pl-2 my-2 shadow-sm border-2"
                 placeholder="enter your email"
-                />
+              />
             </div>
             <div className=" flex flex-col">
               <label htmlFor="password">passWord :</label>
@@ -125,7 +139,15 @@ export default function GueriteAI() {
             <button className="border-2 bg-black py-2 mt-5 flex justify-center rounded-lg w-60 m-auto text-gray-300 hover:text-white duration-300">
               submit
             </button>
-            <p className="mx-auto flex justify-center mt-2 gap-1">souhaitez vous, vous connecter ? cliquez <span onClick={() => setForConnect(!forConnect)} className="hover:text-red-600 duration-300 hover:underline underline-offset-4">ici</span></p>
+            <p className="mx-auto flex justify-center mt-2 gap-1">
+              souhaitez vous, vous connecter ? cliquez{" "}
+              <span
+                onClick={() => setForConnect(!forConnect)}
+                className="hover:text-red-600 duration-300 hover:underline underline-offset-4"
+              >
+                ici
+              </span>
+            </p>
           </form>
         </div>
       </div>
