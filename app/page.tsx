@@ -10,6 +10,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../lib/firebase";
+import Link from "next/link";
 
 interface form {
   name?: string;
@@ -85,13 +86,15 @@ export default function GueriteAI() {
   if (connected === false) {
     return (
       // bg-[url('/login.png')] bg-no-repeat bg-cover bg-[0]
-      <div className="h-screen flex flex-col items-center justify-center 
-       gap-4 bg-gradient-to-L from-gray-200 via-white  to-gray-200">
+      <div className="h-screen flex flex-col items-center justify-center relative gap-4 bg-gradient-to-L from-gray-200 via-white  to-gray-200">
         <h1 className="first-letter:text-4xl text-2xl font-bold ">
           Guerite <span className="uppercase text-4xl">Ai</span>
         </h1>
 
-        <div className=" bg-white shadow-md py-10 px-10 rounded-2xl border-2 border-gray-50">
+        <div className=" bg-white shadow-md py-10 px-10 rounded-2xl border-2 border-gray-50 relative">
+          <Link href={"/help"} className="absolute right-0 top-1">
+            help
+          </Link>
           <p className="text-center mb-4 font-semibold lg:mx-40">
             {forConnect === false
               ? "Enregistrer vous a fin de sauvegarder vos visiteurs"
@@ -171,11 +174,14 @@ export default function GueriteAI() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2 bg-green-50 border border-green-200 px-4 py-2 rounded-lg">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-green-700">
-                Système opérationnel
-              </span>
+            <div className="flex gap-4">
+              <Link href={"/"}>help</Link>
+              <div className="flex items-center space-x-2 bg-green-50 border border-green-200 px-4 py-2 rounded-lg">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-green-700">
+                  Système opérationnel
+                </span>
+              </div>
             </div>
           </div>
         </div>
