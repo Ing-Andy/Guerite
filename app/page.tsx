@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface form {
   name?: string;
@@ -92,9 +93,6 @@ export default function GueriteAI() {
         </h1>
 
         <div className=" bg-white shadow-md py-10 px-10 rounded-2xl border-2 border-gray-50 relative">
-          <Link href={"/help"} className="absolute right-0 top-1">
-            help
-          </Link>
           <p className="text-center mb-4 font-semibold lg:mx-40">
             {forConnect === false
               ? "Enregistrer vous a fin de sauvegarder vos visiteurs"
@@ -139,18 +137,25 @@ export default function GueriteAI() {
                 placeholder="enter your password"
               />
             </div>
-            <button className="border-2 bg-black py-2 mt-5 flex justify-center rounded-lg w-60 m-auto text-gray-300 hover:text-white duration-300">
-              submit
-            </button>
-            <p className="mx-auto flex justify-center mt-2 gap-1">
-              souhaitez vous, vous connecter ? cliquez{" "}
+            <div className="w-full flex gap-2 relative  ">
+              <Button className="border-2 bg-black py-2 mt-5 flex justify-center rounded-lg w-full m-auto text-gray-300 hover:text-white duration-300">
+                submit
+              </Button>
+              <Button>
+                <Link href={"/help"} className="right-0 top-1 text-white">
+                  help
+                </Link>
+              </Button>
+            </div>
+            <div className="mx-auto mt-4 text-center gap-2 inline w-full">
+              souhaitez vous, vous connecter ? cliquez
               <span
                 onClick={() => setForConnect(!forConnect)}
-                className="hover:text-red-600 duration-300 hover:underline underline-offset-4"
+                className="hover:text-red-600 duration-300 hover:underline underline-offset-4 cursor-pointer"
               >
                 ici
               </span>
-            </p>
+            </div>
           </form>
         </div>
       </div>
@@ -175,7 +180,9 @@ export default function GueriteAI() {
             </div>
 
             <div className="flex gap-4">
-              <Link href={"/"}>help</Link>
+              <Button>
+                <Link href={"/help"}>help</Link>
+              </Button>
               <div className="flex items-center space-x-2 bg-green-50 border border-green-200 px-4 py-2 rounded-lg">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium text-green-700">
