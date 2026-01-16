@@ -32,22 +32,43 @@ export default function AdminDashboard() {
 
   // Admin
   const [adminPassword, setAdminPassword] = useState<string>("0000");
-  const [adminIndice, setAdminIndice] = useState<string>("Votre mot de passe est par défaut");
+  const [adminIndice, setAdminIndice] = useState<string>(
+    "Votre mot de passe est par défaut"
+  );
   const [inputPassword, setInputPassword] = useState<string>("");
   const [isVerified, setIsVerified] = useState<boolean>(false);
 
   // Staff
-  const [staffList, setStaffList] = useState<Staff[]>(() => {
-    const data = localStorage.getItem("staffList")
-    return data ? JSON.parse(data) : []
-  });
+  // Staff
+  const [staffList, setStaffList] = useState<Staff[]>([]);
+
   useEffect(() => {
-      localStorage.setItem("staffList", JSON.stringify(staffList));
+    if (typeof window === "undefined") return;
+
+    const data = localStorage.getItem("staffList");
+    if (data) {
+      setStaffList(JSON.parse(data));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    localStorage.setItem("staffList", JSON.stringify(staffList));
   }, [staffList]);
-  const [staffForm, setStaffForm] = useState<Staff>({ nom: "", prenom: "", role: "" });
+
+  const [staffForm, setStaffForm] = useState<Staff>({
+    nom: "",
+    prenom: "",
+    role: "",
+  });
 
   // Roles dynamiques
-  const [roles, setRoles] = useState<string[]>(["Manager", "Développeur", "Designer"]);
+  const [roles, setRoles] = useState<string[]>([
+    "Manager",
+    "Développeur",
+    "Designer",
+  ]);
 
   // Dialog state
   const [showRoleDialog, setShowRoleDialog] = useState(false);
@@ -96,7 +117,9 @@ export default function AdminDashboard() {
           <h2 className="text-3xl font-bold text-gray-800 text-center">
             Vérification administrateur
           </h2>
-          <p className="text-gray-500 text-center">Entrez votre mot de passe personnel</p>
+          <p className="text-gray-500 text-center">
+            Entrez votre mot de passe personnel
+          </p>
 
           <Input
             type="password"
@@ -121,7 +144,9 @@ export default function AdminDashboard() {
       {/* Dashboard Admin */}
       {isVerified && (
         <div className="bg-white shadow-2xl rounded-2xl p-10 flex flex-col gap-6 max-w-md w-full">
-          <h2 className="text-3xl font-bold text-gray-800 text-center">Dashboard Admin</h2>
+          <h2 className="text-3xl font-bold text-gray-800 text-center">
+            Dashboard Admin
+          </h2>
 
           {/* Changer mot de passe / indice */}
           <Dialog>
@@ -171,21 +196,27 @@ export default function AdminDashboard() {
               required
               className="rounded-none"
               value={staffForm.nom}
-              onChange={(e) => setStaffForm((prev) => ({ ...prev, nom: e.target.value }))}
+              onChange={(e) =>
+                setStaffForm((prev) => ({ ...prev, nom: e.target.value }))
+              }
             />
             <Input
               placeholder="Prénom"
               required
               className="rounded-none"
               value={staffForm.prenom}
-              onChange={(e) => setStaffForm((prev) => ({ ...prev, prenom: e.target.value }))}
+              onChange={(e) =>
+                setStaffForm((prev) => ({ ...prev, prenom: e.target.value }))
+              }
             />
 
             {/* Select Role */}
             <div className="flex gap-2 items-center">
               <Select
                 value={staffForm.role}
-                onValueChange={(value) => setStaffForm((prev) => ({ ...prev, role: value }))}
+                onValueChange={(value) =>
+                  setStaffForm((prev) => ({ ...prev, role: value }))
+                }
               >
                 <SelectTrigger className="w-full rounded-none shadow-xs">
                   <SelectValue placeholder="Sélectionnez un rôle" />
@@ -199,14 +230,19 @@ export default function AdminDashboard() {
                 </SelectContent>
               </Select>
 
-              <Button className="bg-black rounded-none shadow-md text-white" onClick={addRole}>
+              <Button
+                className="bg-black rounded-none shadow-md text-white"
+                onClick={addRole}
+              >
                 +
               </Button>
 
               {/* Supprimer rôle via Dialog */}
               <Dialog open={showRoleDialog} onOpenChange={setShowRoleDialog}>
                 <DialogTrigger asChild>
-                  <Button className="bg-black rounded-none shadow-md text-white">Supprimer rôle</Button>
+                  <Button className="bg-black rounded-none shadow-md text-white">
+                    Supprimer rôle
+                  </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[400px]">
                   <DialogHeader>
@@ -219,8 +255,12 @@ export default function AdminDashboard() {
                         <Checkbox
                           checked={rolesToRemove.includes(r)}
                           onCheckedChange={(checked) => {
-                            if (checked) setRolesToRemove((prev) => [...prev, r]);
-                            else setRolesToRemove((prev) => prev.filter((role) => role !== r));
+                            if (checked)
+                              setRolesToRemove((prev) => [...prev, r]);
+                            else
+                              setRolesToRemove((prev) =>
+                                prev.filter((role) => role !== r)
+                              );
                           }}
                         />
                         <span>{r}</span>
