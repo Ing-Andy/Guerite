@@ -182,15 +182,28 @@ export default function GueriteAI() {
               Submit
             </Button>
           </div>
-          <div className="flex flex-col">
-            <p className="capitalize">
-              souhaitez-vous vous Enregistrer ? cliquez{" "}
-              <span
-                onClick={() => setForConnect((prev) => !prev)}
-                className="cursor-pointer"
-              >
-                ici
-              </span>
+          <div className="">
+            <p className="text-sm text-black/30">
+              fait par{" "}
+              <strong className="hover:text-black cursor-pointer duration-500">
+                <Link
+                  href="https://andy-portfolio-jade.vercel.app/fr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Andy Bryan Nzoupet
+                </Link>
+              </strong>{" "}
+              de l'entreprise{" "}
+              <strong className="hover:text-black cursor-pointer duration-500">
+                <Link
+                  href="https://nanosatellitemissions.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  NMD (Nanosatellite Missions Design)
+                </Link>
+              </strong>
             </p>
           </div>
         </div>
