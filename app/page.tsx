@@ -11,7 +11,9 @@ import { auth } from "../lib/firebase";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-
+import { StarIcon } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface form {
   name?: string;
@@ -101,75 +103,97 @@ export default function GueriteAI() {
   };
 
   return (
-    // bg-[url('/login.png')] bg-no-repeat bg-cover bg-[0]
-    <div className="h-screen flex flex-col items-center justify-center relative gap-4 bg-gradient-to-L from-gray-200 via-white  to-gray-200">
-      <h1 className="first-letter:text-4xl text-2xl font-bold ">
-        Guerite <span className="uppercase text-4xl">Ai</span>
-      </h1>
-
-      <div className=" bg-white shadow-md py-10 px-10 rounded-2xl border-2 border-gray-50 relative">
-        <p className="text-center mb-4 font-semibold lg:mx-40">
-          {forConnect === false
-            ? "Enregistrer vous a fin de sauvegarder vos visiteurs"
-            : "connecter vous pour reprendre"}
-        </p>
-        <form className="" onSubmit={handleSubmit}>
-          {forConnect === false && (
-            <div className=" flex flex-col">
-              <label htmlFor="name">nom de l'entreprise:</label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                value={formData.name}
+    <div className="flex w-full *:h-full h-screen">
+      <div className="hidden lg:flex flex-col text-white space-y-4 lg:w-2/3 bg-blue-500 justify-end pl-4 pb-4">
+        <h2 className="text-3xl capitalize">
+          welcome to <br />
+          <span className="text-5xl font-semibold">
+            guerite <strong className="leading-3">AI</strong>
+          </span>
+        </h2>
+        <span>
+          <StarIcon className="" />
+        </span>
+        <p>le commencement d'une air digital au sein de vos entreprise</p>
+      </div>
+      <div className="w-full lg:w-1/3 bg-neutral-200 z-20 pt-20 shadow-lg flex flex-col justify-center items-center">
+        <div className="w-[80%] space-y-8">
+          <div className="flex gap-4 *:first-letter:font-bold *:font-semibold">
+            <h5 className="">
+              Guerite <strong>AI</strong>
+            </h5>
+            <div className="cursor-pointer" onClick={() => setForConnect(true)}>
+              <h5>Sign In</h5>
+              <div
+                className={`${
+                  forConnect === true ? "bg-blue-500 " : "bg-transparent"
+                } w-full h-[2px]`}
+              ></div>
+            </div>
+            <div
+              className="cursor-pointer"
+              onClick={() => setForConnect(false)}
+            >
+              <h5>Sign Up</h5>
+              <div
+                className={`${
+                  forConnect === false ? "bg-blue-500 " : "bg-transparent"
+                } w-full h-[2px]`}
+              ></div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            {forConnect === false && (
+              <div className="gap-2 flex flex-col">
+                <Label htmlFor="name">Nom de l'entreprise</Label>
+                <Input
+                  value={formData.name}
+                  name="name"
+                  id="name"
+                  onChange={handleChange}
+                  className="rounded-none shadow-lg"
+                />
+              </div>
+            )}
+            <div className="gap-2 flex flex-col">
+              <Label htmlFor="email">E-mail de l'entreprise</Label>
+              <Input
+                value={formData.email}
+                name="email"
+                id="email"
                 onChange={handleChange}
-                className="h-12 rounded-md pl-2 my-2 shadow-sm border-2"
-                placeholder="enter your name"
+                className="rounded-none shadow-lg"
               />
             </div>
-          )}
-          <div className=" flex flex-col">
-            <label htmlFor="email">Email de l'entreprise:</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              id="email"
-              className="h-12 rounded-md pl-2 my-2 shadow-sm border-2"
-              placeholder="enter your email"
-            />
-          </div>
-          <div className=" flex flex-col">
-            <label htmlFor="password">PassWord :</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="h-12 rounded-md pl-2 my-2 shadow-sm border-2"
-              placeholder="enter your password"
-            />
-          </div>
-          <div className="flex gap-2 w-full">
-            <Button className="w-full">submit</Button>
-            <Button>
-              <Link href={"/help"} className="">
-                help
-              </Link>
+            <div className="gap-2 flex flex-col">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                value={formData.password}
+                name="password"
+                id="password"
+                onChange={handleChange}
+                className="rounded-none shadow-lg"
+              />
+            </div>
+            <Button
+              onClick={handleSubmit}
+              className="text-black hover:bg-blue-500 hover:rounded-lg duration-500 transition-all font-semibold tracking-wider uppercase rounded-none shadow-lg bg-blue-500"
+            >
+              Submit
             </Button>
           </div>
-          <p className="mx-auto   text-center mt-2 gap-1">
-            souhaitez vous, vous connecter ? cliquez{" "}
-            <span
-              onClick={() => setForConnect((prev) => !prev)}
-              className="hover:text-red-600 duration-300 cursor-pointer hover:underline underline-offset-4"
-            >
-              ici
-            </span>
-          </p>
-        </form>
+          <div className="flex flex-col">
+            <p className="capitalize">
+              souhaitez-vous vous Enregistrer ? cliquez{" "}
+              <span
+                onClick={() => setForConnect((prev) => !prev)}
+                className="cursor-pointer"
+              >
+                ici
+              </span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

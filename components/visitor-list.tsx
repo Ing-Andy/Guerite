@@ -42,7 +42,7 @@ export default function VisitorList() {
       v.phone,
       v.numeroCNI,
       v.profession,
-      // new Date(v.date).toLocaleString(),
+      v.quivoir
     ]);
 
     autoTable(doc, {
@@ -56,6 +56,7 @@ export default function VisitorList() {
           "Téléphone",
           "numero de CNI",
           "pofession",
+          "pour voir",
         ],
       ],
       body: tableData,
@@ -65,35 +66,6 @@ export default function VisitorList() {
     doc.save("visitors.pdf");
   };
 
-  // 📊 Télécharger en Excel
-  // const downloadExcel = () => {
-  //   const worksheetData = visitors.map((v) => ({
-  //     ID: v.id,
-  //     Nom: v.nom,
-  //     Email: v.prenoms,
-  //     date_N: v.dateNaissance,
-  //     lieux_N: v.lieuNaissance,
-  //     Téléphone: v.phone,
-  //     numeroCNI: v.numeroCNI,
-  //     profession: v.profession,
-  //     // Date: new Date(v.date).toLocaleString(),
-  //   }));
-
-  //   const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Visiteurs");
-
-  //   const excelBuffer = XLSX.write(workbook, {
-  //     bookType: "xlsx",
-  //     type: "array",
-  //   });
-  //   const blob = new Blob([excelBuffer], {
-  //     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-  //   });
-  //   saveAs(blob, "visitors.xlsx");
-  // };
-
-  // 🧾 Télécharger en TXT (propre et sans accents)
   const downloadTXT = () => {
     try {
       if (!visitors || visitors.length === 0) {
@@ -121,6 +93,7 @@ export default function VisitorList() {
         "Telephone",
         "Numero_CNI",
         "Profession",
+        "Pour voir",
       ];
 
       // 🔹 3. Convertir les visiteurs en tableau sans accents
@@ -133,6 +106,7 @@ export default function VisitorList() {
         removeAccents(v.phone || ""),
         removeAccents(v.numeroCNI || ""),
         removeAccents(v.profession || ""),
+        removeAccents(v.quivoir || ""),
       ]);
 
       // 🔹 4. Calculer les largeurs max par colonne pour un alignement parfait
@@ -359,6 +333,9 @@ export default function VisitorList() {
                 <th className="border px-4 py-3 text-center font-semibold text-gray-700">
                   Verso CNI
                 </th>
+                <th className="border px-4 py-3 text-center font-semibold text-gray-700">
+                  pour voir
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -478,6 +455,9 @@ export default function VisitorList() {
                             )}
                           </DialogContent>
                         </Dialog>
+                      </td>
+                      <td>
+                        {visitor.quivoir}
                       </td>
                     </tr>
 

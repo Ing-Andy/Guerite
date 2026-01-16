@@ -16,6 +16,7 @@ export interface Visitor {
   phone: string
   numeroCNI: string
   profession: string
+  quivoir: string
   photo_recto?: string | null
   photo_verso?: string | null
 }
