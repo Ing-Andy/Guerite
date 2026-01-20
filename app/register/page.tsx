@@ -1,16 +1,17 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import VisitorForm from "@/components/visitor-form";
 import VisitorList from "@/components/visitor-list";
-import { List, Shield } from "lucide-react";
+import { List, ListEnd, Menu, Shield } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function page() {
   const [scannedData, setScannedData] = useState<object>({});
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const [activeMode, setActiveMode] = useState<"scanner" | "form">("scanner");
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleVisitorAdded = () => {
     console.log("[v0] Visiteur ajouté, rechargement de la liste");
@@ -20,7 +21,7 @@ export default function page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="hidden lg:flex bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -36,7 +37,9 @@ export default function page() {
             </div>
 
             <div className="flex gap-4">
-              <Button><Link href={'/addStaff'}>ajouter un membre</Link></Button>
+              <Button>
+                <Link href={"/addStaff"}>ajouter un membre</Link>
+              </Button>
               <Button>
                 <Link href={"/"}>aide</Link>
               </Button>
@@ -50,7 +53,30 @@ export default function page() {
           </div>
         </div>
       </header>
-
+      <div className="flex lg:hidden px-4">
+        <div className="max-w-1/2">
+          <h1 className="text-3xl font-bold text-gray-900">Guerite AI</h1>
+          <p className="text-sm text-gray-600">
+            Système de gestion autonome des visiteurs
+          </p>
+        </div>
+        <div className="w-2/3 flex justify-end">
+          <Sheet>
+            <SheetTrigger>
+              <Menu className="w-8 h-8 float-right " />
+            </SheetTrigger>
+            <SheetContent className="justify-start items-start">
+              <SheetHeader className="">
+              <SheetTitle className="text-start">Menu latteral</SheetTitle>
+              </SheetHeader>
+              <div className="flex flex-col gap-4 mt-4 w-full *:capitalize">
+                <Link href={'/addStaff'} className="bg-white/20 text-black">Add a staff member</Link>
+                <Link href={'/help'} className="bg-white/20 text-black">go to Help</Link>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
@@ -76,7 +102,7 @@ export default function page() {
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+          {/* <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
             <h3 className="font-bold text-blue-900 mb-3 text-lg">
               Fonctionnalités du système:
             </h3>
@@ -124,11 +150,11 @@ export default function page() {
                 </span>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-12">
+      <footer className=" mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-sm text-gray-600">
             <p className="font-medium">

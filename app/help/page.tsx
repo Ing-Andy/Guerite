@@ -15,6 +15,11 @@ export default function page() {
         "pour s'enregistrer il vous suffit de re-Entrer dans l'application, et vous serez a nouveaux sur la login page, rassurer vous juste d'etre sur le formulaire d'enregistrement",
     },
     {
+      question: "comment ajouter un membre du staff ?",
+      reponse:
+        "appuyer su le menu en haut a droite, puis selectionner ajouter un membre, pour plus de securiter vous devrier entrer le mot de passe administrateur par defaut c'est a dire 0000, puis entrer votre membre",
+    },
+    {
       question: "comment se connecter ?",
       reponse:
         "pour s'enregistrer il vous suffit de re-Entrer dans l'application, et vous serez a nouveaux sur la login page, rassurer vous juste d'etre sur le formulaire d'enregistrement",
@@ -36,9 +41,9 @@ export default function page() {
     },
   ];
   return (
-    <div className="flex flex-col w-full h-screen items-center bg-gray500">
-      <h1 className="text-3xl lg:text-5xl font-semibold text-center mt-10">Vous Renseigner !!</h1>
-      <div className="flex flex-col gap-5 w-[80%] h-full justify-center items-center">
+    <div className="flex flex-col w-full h-screen justify-center items-center bg-gray500">
+      <h1 className="text-3xl lg:text-5xl font-semibold text-center ">Vous Renseigner !!</h1>
+      <div className="flex flex-col gap-5 w-[80%] h-max justify-center my-10 items-center">
         {questionReponse.map((el, index) => (
           <Accordion key={index} type="single" collapsible className="w-full shadow">
             <AccordionItem value={`items-${index}`} className="border rounded-md px-10 min-w-full">
@@ -48,7 +53,7 @@ export default function page() {
           </Accordion>
         ))}
       </div>
-      <Button><Link href={"/"} >cancel</Link></Button>
+      <Button ><Link href={"/register"} >cancel</Link></Button>
     </div>
   );
 }

@@ -33,14 +33,53 @@ export default function AdminDashboard() {
   // Admin
   const [adminPassword, setAdminPassword] = useState<string>("0000");
   const [adminIndice, setAdminIndice] = useState<string>(
-    "Votre mot de passe est par défaut"
+    "Votre mot de passe est par défaut",
   );
+  
+  const [staffList, setStaffList] = useState<Staff[]>([]);
   const [inputPassword, setInputPassword] = useState<string>("");
   const [isVerified, setIsVerified] = useState<boolean>(false);
+    // Roles dynamiques
+  const [roles, setRoles] = useState<string[]>([
+    "Manager",
+    "Développeur",
+    "Designer",
+  ]);
+  const STORAGE_KEY = "0000";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      const data = JSON.parse(saved);
+
+      setAdminPassword(data.adminPassword ?? "0000");
+      setAdminIndice(data.adminIndice ?? "Votre mot de passe est par défaut");
+      setIsVerified(data.isVerified ?? false);
+      setStaffList(data.staffList ?? []);
+      setRoles(data.roles ?? ["Manager", "Développeur", "Designer"]);
+    }
+  }, []);
+  useEffect(() => {
+  if (typeof window === "undefined") return;
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      adminPassword,
+      adminIndice,
+      isVerified,
+      staffList,
+      roles,
+    })
+  );
+}, [adminPassword, adminIndice, isVerified, staffList, roles]);
+
 
   // Staff
   // Staff
-  const [staffList, setStaffList] = useState<Staff[]>([]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -63,12 +102,7 @@ export default function AdminDashboard() {
     role: "",
   });
 
-  // Roles dynamiques
-  const [roles, setRoles] = useState<string[]>([
-    "Manager",
-    "Développeur",
-    "Designer",
-  ]);
+
 
   // Dialog state
   const [showRoleDialog, setShowRoleDialog] = useState(false);
@@ -241,7 +275,7 @@ export default function AdminDashboard() {
               <Dialog open={showRoleDialog} onOpenChange={setShowRoleDialog}>
                 <DialogTrigger asChild>
                   <Button className="bg-black rounded-none shadow-md text-white">
-                    Supprimer rôle
+                    -
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[400px]">
@@ -259,7 +293,7 @@ export default function AdminDashboard() {
                               setRolesToRemove((prev) => [...prev, r]);
                             else
                               setRolesToRemove((prev) =>
-                                prev.filter((role) => role !== r)
+                                prev.filter((role) => role !== r),
                               );
                           }}
                         />

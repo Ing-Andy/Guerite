@@ -31,7 +31,7 @@ export default function GueriteAI() {
   const [scannedData, setScannedData] = useState<object>({});
   const [activeMode, setActiveMode] = useState<"scanner" | "form">("scanner");
   const [connected, setConnected] = useState<boolean>(false);
-  const [forConnect, setForConnect] = useState<boolean>(false);
+  const [forConnect, setForConnect] = useState<boolean>(true);
   const [staff, setStaff] = useState<staff[]>([]);
   const [formData, setFormData] = useState<form>({
     name: "",

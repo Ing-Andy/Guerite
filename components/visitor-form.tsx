@@ -47,22 +47,10 @@ export default function VisitorForm({ onVisitorAdded, initialData }: Props) {
     photo_verso: "",
   });
   // Staff
-  const [staffList, setStaffList] = useState<Staff[]>([]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const data = localStorage.getItem("staffList");
-    if (data) {
-      setStaffList(JSON.parse(data));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    localStorage.setItem("staffList", JSON.stringify(staffList));
-  }, [staffList]);
+  const staffList: Staff[] = localStorage.getItem("staffList")
+    ? JSON.parse(localStorage.getItem("staffList") || "[]")
+    : [];
+  // Existing visitor and visit history
 
   const [existingVisitor, setExistingVisitor] = useState<Visitor | null>(null);
   const [visitHistory, setVisitHistory] = useState<Visit[]>([]);
